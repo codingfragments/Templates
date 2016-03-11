@@ -1,8 +1,17 @@
 package com.appdynamics.ace.test.dynservice;
 
+import com.appdynamics.apm.appagent.api.ITransactionDemarcator;
+import com.singularity.ee.agent.appagent.kernel.JavaAgent;
+import com.singularity.ee.agent.appagent.kernel.spi.IMetricHandler;
+import com.singularity.ee.agent.appagent.kernel.spi.Service;
 import com.singularity.ee.agent.appagent.services.bciengine.BCIEngineService;
 
+import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by stefan.marx on 27.02.14.
@@ -24,10 +33,37 @@ public class TestServiceController implements TestServiceControllerMBean {
     @Override
     public String analyzeClass(String classname) {
 
-        BCIEngineService bci = (BCIEngineService) _svc.getCtx().getService(BCIEngineService.class);
+        Map<String, Service> map = JavaAgent.getInstance().getKernel().getLifeCycleManager().getRunningServices();
+        IMetricHandler hh = JavaAgent.getInstance().getMetricHandler();
+
+        ITransactionDemarcator dem = JavaAgent.getInstance().getTransactionDelegate();
+
+        dem.setActivityNameForCurrentThread()
 
 
-        return bci.toString();
+
+        String s = "";
+        for (Map.Entry e : map.entrySet()) {
+
+            s+= "  "+e.getKey()+"  .. "+e.getValue();
+
+        }
+        return s;
+    }
+
+    @Override
+    public String dump() {
+        StringBuffer buffer = new StringBuffer("DEBUG \n");
+        buffer.append(_svc.getCtx().getNodeDirName())
+            .append("\n");
+        MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
+        Set<ObjectName> names = ms.queryNames(null, null);
+
+        for (ObjectName s : names) {
+            buffer.append(s.getCanonicalName()).append("\n");
+        }
+
+        return buffer.toString();
     }
 
     @Override

@@ -18,6 +18,8 @@ import java.util.Hashtable;
  * Created by stefan.marx on 27.02.14.
  */
 public class TestService implements IDynamicService {
+    private IServiceConfig _cfg;
+
     public IDynamicServiceManager getSvcManager() {
         return _svcManager;
     }
@@ -39,6 +41,7 @@ public class TestService implements IDynamicService {
     public void setDynamicServiceManager(IDynamicServiceManager iDynamicServiceManager) {
         _svcManager = iDynamicServiceManager;
         logger = _svcManager.createLogger(getClass().getName());
+
     }
 
     @Override
@@ -54,6 +57,9 @@ public class TestService implements IDynamicService {
 
     @Override
     public void configure(IServiceConfig iServiceConfig) throws ConfigException {
+        _cfg = iServiceConfig;
+
+
 
     }
 

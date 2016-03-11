@@ -1,0 +1,6 @@
+buildName=44-4.1.0.next-build
+buildHash=6e729ea979b5b338df7c82b2f5fe169e88077566
+buildTimestamp=2015-07-07T15:32:18+0000
+buildNumber=1840
+jobName=build-machine-agent
+version=4.1.0.4

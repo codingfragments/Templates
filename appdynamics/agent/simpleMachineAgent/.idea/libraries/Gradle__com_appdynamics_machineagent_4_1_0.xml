@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: com.appdynamics:machineagent:4.1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../maven/artifact-library/repo/com/appdynamics/machineagent/4.1.0/machineagent-4.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

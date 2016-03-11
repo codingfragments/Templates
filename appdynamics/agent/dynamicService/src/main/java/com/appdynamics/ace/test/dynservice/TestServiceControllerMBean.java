@@ -10,4 +10,6 @@ public interface TestServiceControllerMBean extends IDynamicMBeanBase {
 
 
     public String analyzeClass(String classname);
+
+    public String dump();
 }

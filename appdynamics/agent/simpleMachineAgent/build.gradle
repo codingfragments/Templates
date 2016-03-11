@@ -9,7 +9,7 @@
 
 
 apply plugin: 'java'
-apply plugin: 'idea'
+//apply plugin: 'idea'
 apply plugin: 'maven'
 apply from: 'base.gradle'
 
@@ -17,40 +17,86 @@ apply from: 'base.gradle'
 version='1.0'
 
 
+AgentName ='TestAgent'
+AgentPackageName='TestAgent'
+
 repositories {
     maven {
-        url "https://raw.github.com/Appdynamics/artifact-library/master/repo/"
+//        url "https://raw.github.com/Appdynamics/artifact-library/master/repo/"
+        url "file:///vlab/maven/artifact-library/repo/"
+    }
+    maven {
+        url "file:///vlab/maven/private-artifact-library/repo/"
     }
 }
 
 // no transitive Dependencies for compile only APIs
 configurations.compileOnly.transitive=false
 
+configurations {
+    agentRuntime
+    agentBinary
+}
+
 
 dependencies {
-    compileOnly ("log4j:log4j:1.2.15")
+    compile ("log4j:log4j:1.2.17")
+    compile "com.appdynamics:machineagent:4.1.0"
 
-    compileOnly "com.appdynamics:machineagent:3.7.11"
+    agentBinary "com.appdynamics:MachineAgent:4.1.0@zip"
+
+
 }
 
 
 generateMonitorXML {
-    agentDescription = "Simple Agent Test"
+    agentDescription = "TestAgent"
+    timeout = 120
+    agentName=AgentName
     mainClass = 'de.appdynamics.ace.tutorial.customagent.simple.SimpleAgent'
+    classpath = "${AgentName}.jar"    // be carefull this is a hardcoded Name !!!
+}
+
+
+jar {
+    archiveName="${AgentName}.jar"
 }
 
 
 task packageAgent (type: Zip) {
-    appendix = "agent"
-    into(project.name+"/lib") {
-        from(project.configurations.runtime)
+    archiveName = AgentPackageName+".zip"
+    into(AgentName+"/lib") {
+        from(project.configurations.agentRuntime)
     }
-    into(project.name) {
+    into(AgentName) {
         from jar
         from generateMonitorXML
+
     }
+
+
 }
 
 tasks.assemble.dependsOn(packageAgent)
 
 
+
+task installSandbox() {
+    doLast {
+        copy {
+            configurations.agentBinary.filter { it.toString().endsWith(".zip") }.each {
+                from zipTree(it)
+            }
+            into 'build/sandbox/agent'
+        }
+        copy {
+            files("build/distributions/"+AgentPackageName+".zip").each{
+                from zipTree(it)
+            }
+            into 'build/sandbox/agent/monitors'
+        }
+    }
+}
+
+tasks.installSandbox.dependsOn(packageAgent)
+tasks.packageAgent.dependsOn(jar)

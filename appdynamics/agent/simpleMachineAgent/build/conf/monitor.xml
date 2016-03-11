@@ -1,0 +1,21 @@
+<monitor>
+  <name>TestAgent</name>
+  <type>managed</type>
+  <description>TestAgent</description>
+  <monitor-configuration />
+  <monitor-run-task>
+    <execution-style>periodic</execution-style>
+    <execution-frequency-in-seconds>60</execution-frequency-in-seconds>
+    <name>TestAgent</name>
+    <display-name>TestAgent</display-name>
+    <description>TestAgent</description>
+    <type>java</type>
+    <execution-timeout-in-secs>120</execution-timeout-in-secs>
+    <task-arguments />
+    <java-task>
+      <classpath>./lib/:TestAgent.jar</classpath>
+      <load-jars-in-classpath-dirs>true</load-jars-in-classpath-dirs>
+      <impl-class>de.appdynamics.ace.tutorial.customagent.simple.SimpleAgent</impl-class>
+    </java-task>
+  </monitor-run-task>
+</monitor>

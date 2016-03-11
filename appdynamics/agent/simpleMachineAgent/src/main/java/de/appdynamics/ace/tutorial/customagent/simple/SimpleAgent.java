@@ -22,6 +22,10 @@ import java.util.Random;
 public class SimpleAgent extends AManagedMonitor {
 
     private static Logger logger = Logger.getLogger(SimpleAgent.class);
+    private final Random rnd;
+    int run = 0;
+
+
 
 
     private final static String metricPrefix = "Custom Metrics|MySimpleAgent|MyShelter|";
@@ -29,12 +33,15 @@ public class SimpleAgent extends AManagedMonitor {
 
     public SimpleAgent() {
         logger.log(Level.INFO," LOADED !!!!");
-
+         rnd = new Random();
 
     }
 
     public TaskOutput execute(Map<String, String> stringStringMap, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
-        MetricWriter mw = getMetricWriter(metricPrefix + "Base Metric",
+
+        System.out.println("RUN:"+(run++));
+
+        MetricWriter mw = getMetricWriter(metricPrefix + "Base AVG Metric",
                 MetricWriter.METRIC_AGGREGATION_TYPE_AVERAGE,
                 MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE,
                 MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
@@ -42,9 +49,9 @@ public class SimpleAgent extends AManagedMonitor {
         mw.printMetric("765215");
 
 
-        mw = getMetricWriter(metricPrefix + "Nope",
+        mw = getMetricWriter(metricPrefix + "Base Sum Metric",
                 MetricWriter.METRIC_AGGREGATION_TYPE_AVERAGE,
-                MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE,
+                MetricWriter.METRIC_TIME_ROLLUP_TYPE_SUM,
                 MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
 
 
@@ -52,6 +59,33 @@ public class SimpleAgent extends AManagedMonitor {
         long l = r.nextInt(1000);
 
         mw.printMetric(String.valueOf( (int) Math.sqrt(l)) );
+
+
+
+        mw = getMetricWriter(metricPrefix + "Base Current Metric",
+                MetricWriter.METRIC_AGGREGATION_TYPE_AVERAGE,
+                MetricWriter.METRIC_TIME_ROLLUP_TYPE_CURRENT,
+                MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
+
+        if (run%3 == 0) {
+            System.out.println("MONITORED");
+            mw.printMetric("5245");
+        }
+
+
+        mw = getMetricWriter(metricPrefix + "Base random2 Metric",
+                MetricWriter.METRIC_AGGREGATION_TYPE_AVERAGE,
+                MetricWriter.METRIC_TIME_ROLLUP_TYPE_CURRENT,
+                MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
+
+        if (run > 1000) run = 1;
+        if (run%10 > 0) {
+             int r2 = rnd.nextInt(10);
+
+            int val = r2+(10*run);
+            System.out.println("RANDOM !!! "+val + " ("+r2+")");
+            mw.printMetric(""+val);
+        } else System.out.println("RANDOM Skipped !!!");
 
 
         System.out.println(" ------------->>>>>> MONITORED <<<<<<<<<-------------------");

@@ -1,0 +1,14 @@
+[Unit]
+Description=AppDynamics Machine Agent
+
+[Service]
+# The AppDynamics machine agetn startup script does not fork a process, so
+# this is a simple service.
+Type=simple
+PIDFile=/var/run/appdynamics/appdynamics-machine-agent
+ExecStart=/opt/appdynamics/machine-agent/scripts/machine-agent-daemon
+
+[Install]
+# Start the AppDynamics machine agent service during the setup for a
+# non-graphical multi-user system.
+WantedBy=multi-user.target

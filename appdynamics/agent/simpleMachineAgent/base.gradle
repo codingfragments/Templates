@@ -18,11 +18,7 @@ sourceSets {
     }
 }
 
-idea {
-    module {
-        scopes.PROVIDED.plus += configurations.compileOnly
-    }
-}
+
 
 
 
@@ -45,8 +41,10 @@ class GenerateMonitorConf extends DefaultTask {
     int timeout = 30
 
     @Input
-    String jarName = ""
+    String classpath = ""
 
+    @Input
+    boolean continuous = false;
     @OutputFile
     File output  = "./build/conf/monitor.xml" as File
 
@@ -61,7 +59,7 @@ class GenerateMonitorConf extends DefaultTask {
                 xml.description(agentDescription)
                 xml.'monitor-configuration'()
                 xml.'monitor-run-task'() {
-                    xml.'execution-style'('periodic')
+                    xml.'execution-style'((continuous)?'continuous':'periodic')
                     xml.'execution-frequency-in-seconds'(sampleFreq)
                     xml.name(agentName)
                     xml.'display-name'(agentName)
@@ -70,7 +68,8 @@ class GenerateMonitorConf extends DefaultTask {
                     xml.'execution-timeout-in-secs'(timeout)
                     xml.'task-arguments'()
                     xml.'java-task'(){
-                        xml.classpath(jarName)
+                        xml.classpath("./lib/:"+classpath)
+                        xml.'load-jars-in-classpath-dirs'("true")
                         xml.'impl-class'(mainClass)
                     }
 
@@ -89,7 +88,6 @@ task generateMonitorXML (type: GenerateMonitorConf) {
 
     output = "$buildDir/conf/monitor.xml" as File
 
-    mainClass = 'de.appdynamics.ace.tutorial.customagent.simple.SimpleAgent'
-    jarName = jar.archiveName
+    classpath = jar.archiveName
 
 }

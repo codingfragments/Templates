@@ -1,0 +1,25 @@
+apply plugin: 'groovy'
+apply plugin: "application"
+
+
+//
+
+// Specify the Application settings
+applicationName = 'GroovyCli'
+mainClassName = "de.appdynamics.ace.groovycli.test.Main"
+applicationDefaultJvmArgs = ["-Xms50m","-Xmx50m"]
+
+repositories {
+    jcenter()
+    maven {
+        url "https://raw.github.com/Appdynamics/artifact-library/master/repo/"
+    }
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.10'
+    testCompile 'junit:junit:4.12'
+    compile 'com.appdynamics.ace.cli:CommandFramework:1.4'
+
+}
+

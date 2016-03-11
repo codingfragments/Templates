@@ -10,6 +10,21 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
+apply from: 'obfuscation.gradle'
+
+
+
+dependencies {
+    obfuscateRun 'com.appdynamics.agent.develop:ObfuscationAdapter:4.0.0.4@jar'
+    obfuscateRun 'com.appdynamics.agent.develop:ObfuscationAsm:4.0.0.4@jar'
+
+
+
+    obfuscate 'com.appdynamics.agent.develop:AppAgent:4.0.0@jar'
+    obfuscate 'com.appdynamics.agent.develop:ObfuscationMapping:4.0.0@map'
+
+
+}
 
 
 jar {
@@ -48,7 +63,11 @@ dependencies {
    compile 'com.appdynamics.develop:Log4J:3.7.15'
 
     testCompile "junit:junit:4.11"
-    compile 'com.appdynamics.agent.develop:AppAgentPlain:3.7.15'
+    compile 'com.appdynamics.agent.develop:AppAgentPlain:4.0.0'
+    compile 'com.appdynamics:javaagent:4.0.0'
+
+    //compile 'com.appdynamics:agent-api:4.0.0'
+
 }
 
 task all << {
@@ -56,7 +75,8 @@ task all << {
 }
 
 assemble.dependsOn( all)
-all.dependsOn('obfuscate-3.7.15')
+//all.dependsOn('obfuscate-3.7.15')
+all.dependsOn('obfuscate-4.0.0')
 
 
 
@@ -66,65 +86,5 @@ all.dependsOn('obfuscate-3.7.15')
 
 
 
-configurations {
-    obfuscate
-    obfuscateRun
-}
-
-dependencies {
-    obfuscateRun 'com.appdynamics.agent.develop:ObfuscationAdapter:3.7.15@jar'
-    obfuscateRun 'com.appdynamics.agent.develop:ObfuscationAsm:3.7.15@jar'
-    obfuscate 'com.appdynamics.agent.develop:AppAgent:3.7.15@jar'
-    obfuscate 'com.appdynamics.agent.develop:ObfuscationMapping:3.7.15@map'
-}
-
-String findMap(def version) {
-    def l = [];
-    configurations.obfuscate.filter { it.toString().endsWith("ObfuscationMapping-"+version+".map") }.each{l += it}
-    return l[0].absolutePath
-}
-
-String findAgent(def version) {
-    def l = [];
-    configurations.obfuscate.filter { it.toString().endsWith("AppAgent-"+version+".jar") }.each{l += it}
-    return l[0].absolutePath
-}
-
-String generateObfuscatedJarName(def version)  {
-    def n2 = version.replace(".","_")
-    def n = jar.archiveName - ("."+jar.extension)
-    def n3 = n+"_agent_"+n2+"."+jar.extension
-    return n3;
-}
 
 
-
-
-tasks.addRule("Pattern: obfuscate-<ID>") { String taskName ->
-    if (taskName.startsWith("obfuscate")) {
-        task(taskName, dependsOn: 'jar') << {
-            //
-            // move this to a propper task definition later
-            //
-            def v = (taskName - 'obfuscate-')
-            println "Obfuscating: " + v
-            println "this:"+this;
-
-
-//            classpath=file(findAdapter("3.7.15"))
-//            main="com.singularity.ee.obsfucation.adapter.Translator"
-
-            javaexec {
-                 classpath = configurations.obfuscateRun
-                main = 'com.singularity.ee.obsfucation.adapter.Translator'
-                file("build/obfuscated").mkdirs();
-                args = [
-                        "-version" , v,
-                        "-inputJar" , jar.archivePath,
-                        "-outputJar" , file("build/obfuscated/"+generateObfuscatedJarName(v)),
-                        "-jarUrl", "file://"+findAgent(v),
-                        "-zkmUrl", "file://"+findMap(v) ];
-            }
-        }
-    }
-}

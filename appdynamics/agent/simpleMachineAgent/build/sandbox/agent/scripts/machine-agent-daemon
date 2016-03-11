@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# This script starts the machine agent as a daemon. It is used by systemd to start the appdynamics-machine-agent
+# service (see etc/systemd/system/appdynamics-machine-agent.service).
+
+# Defaults. Do not edit these. They will be overwritten in updates.
+# Override in /etc/sysconfig/appdynamics-machine-agent
+MACHINE_AGENT_HOME=/opt/appdynamics/machine-agent
+JAVA_HOME=/opt/appdynamics/machine-agent/jre
+
+# source script config
+[ -f /etc/sysconfig/$prog ] && source /etc/sysconfig/$prog
+
+prog="appdynamics-machine-agent"
+piddir=/var/run/appdynamics
+pidfile=$piddir/$prog
+lockdir=/var/lock/subsys
+
+# make sure needed dirs are there
+mkdir -p $piddir
+mkdir -p $lockdir
+
+echo -n $"Starting $prog:"
+JAVA_HOME=$JAVA_HOME $MACHINE_AGENT_HOME/bin/machine-agent -d -p $pidfile

@@ -1,0 +1,16 @@
+<config>
+    <disk aggregate="true" enabled="true">/dev/disk3s2</disk>
+    <disk aggregate="false" enabled="false">//stefan@nas._afpovertcp._tcp.local/TC_on_NAS</disk>
+    <disk aggregate="true" enabled="true">/dev/disk1</disk>
+    <disk aggregate="true" enabled="true">//stefan@nas/movies</disk>
+    <disk aggregate="false" enabled="false">devfs</disk>
+    <network aggregate="true" enabled="false">lo0</network>
+    <network aggregate="true" enabled="false">bridge0</network>
+    <network aggregate="true" enabled="false">awdl0</network>
+    <network aggregate="true" enabled="false">p2p0</network>
+    <network aggregate="true" enabled="true">en0</network>
+    <network aggregate="true" enabled="false">en2</network>
+    <network aggregate="true" enabled="false">en1</network>
+    <network aggregate="true" enabled="true">tun0</network>
+    <network aggregate="true" enabled="true">en3</network>
+</config>
